@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — NovaCart</title>
+  <meta name="description" content="NovaCart Admin Dashboard — manage products and orders.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg nc-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">Nova<span>Cart</span></a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMain">
+        <ul class="navbar-nav ms-auto align-items-center gap-1">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="admin.html">Admin</a></li>
+          <li class="nav-item">
+            <a class="nav-link nc-cart-badge" href="cart.html">
+              <i class="bi bi-bag" style="font-size:1.15rem"></i>
+              <span class="nc-cart-count" style="display:none">0</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Admin Header -->
+  <div class="nc-admin-header">
+    <div class="container">
+      <h1><i class="bi bi-speedometer2 me-2" style="color:var(--nc-gold)"></i>Admin Dashboard</h1>
+      <p>Manage products and orders</p>
+    </div>
+  </div>
+
+  <div class="container nc-admin-page">
+
+    <!-- ── Product Management ──────────────────────────────── -->
+    <div class="nc-admin-section">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h3 class="nc-admin-section-title mb-0"><i class="bi bi-box-seam"></i> Product Management</h3>
+        <button class="nc-btn-gold" onclick="openProductModal()">
+          <i class="bi bi-plus-lg"></i> Add Product
+        </button>
+      </div>
+
+      <div id="productsLoading" class="nc-loading">
+        <div class="spinner-border" role="status"></div>
+        <span>Loading products...</span>
+      </div>
+
+      <div class="nc-admin-card">
+        <div class="nc-admin-table-wrap">
+          <table class="nc-admin-table" id="productsTable" style="display:none">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Rating</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="productsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Order Management ────────────────────────────────── -->
+    <div class="nc-admin-section">
+      <h3 class="nc-admin-section-title"><i class="bi bi-receipt"></i> Order Management</h3>
+
+      <div id="ordersLoading" class="nc-loading">
+        <div class="spinner-border" role="status"></div>
+        <span>Loading orders...</span>
+      </div>
+
+      <div id="adminOrdersList"></div>
+
+      <div id="ordersEmpty" class="nc-empty-state" style="display:none">
+        <i class="bi bi-receipt-cutoff"></i>
+        <h4>No orders yet</h4>
+        <p>Orders will appear here once customers start placing them.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Product Modal -->
+  <div class="modal fade nc-modal" id="productModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="productModalTitle">Add Product</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="productForm">
+            <input type="hidden" id="pmId">
+            <div class="mb-3">
+              <label class="nc-form-label">Product Name *</label>
+              <input type="text" class="form-control nc-form-control" id="pmName" required>
+            </div>
+            <div class="mb-3">
+              <label class="nc-form-label">Description *</label>
+              <textarea class="form-control nc-form-control" id="pmDesc" rows="3" required></textarea>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label class="nc-form-label">Price (₹) *</label>
+                <input type="number" class="form-control nc-form-control" id="pmPrice" min="0" required>
+              </div>
+              <div class="col-6">
+                <label class="nc-form-label">Stock *</label>
+                <input type="number" class="form-control nc-form-control" id="pmStock" min="0" required>
+              </div>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label class="nc-form-label">Category *</label>
+                <input type="text" class="form-control nc-form-control" id="pmCategory" required>
+              </div>
+              <div class="col-6">
+                <label class="nc-form-label">Rating (0-5)</label>
+                <input type="number" class="form-control nc-form-control" id="pmRating" min="0" max="5" step="0.1" value="0">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="nc-form-label">Image URL *</label>
+              <input type="url" class="form-control nc-form-control" id="pmImage" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="nc-btn-primary" id="pmSaveBtn" onclick="saveProduct()">Save Product</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Detail Modal -->
+  <div class="modal fade nc-modal" id="orderDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Order Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="orderDetailBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="nc-footer" style="margin-top:2rem">
+    <div class="container">
+      <div class="nc-footer-bottom" style="border:none;padding-top:0;margin-top:0">
+        &copy; 2026 NovaCart Admin. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

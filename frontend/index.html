@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NovaCart — Good products. Simple shopping.</title>
+  <meta name="description" content="Discover thoughtfully selected products for work, travel and everyday life at NovaCart.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg nc-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">Nova<span>Cart</span></a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMain">
+        <ul class="navbar-nav ms-auto align-items-center gap-1">
+          <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#catalog">Categories</a></li>
+          <li class="nav-item"><a class="nav-link" href="orders.html">Orders</a></li>
+          <li class="nav-item">
+            <a class="nav-link nc-cart-badge" href="cart.html">
+              <i class="bi bi-bag" style="font-size:1.15rem"></i>
+              <span class="nc-cart-count" style="display:none">0</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="nc-hero">
+    <div class="container">
+      <h1>Good products.<br>Simple shopping.</h1>
+      <p>Discover thoughtfully selected products for work, travel and everyday life.</p>
+      <a href="#catalog" class="nc-btn-primary">Explore Collection <i class="bi bi-arrow-down"></i></a>
+    </div>
+  </section>
+
+  <!-- Product Catalog -->
+  <section id="catalog" class="py-5">
+    <div class="container">
+      <div class="mb-4">
+        <h2 class="nc-section-heading">Shop all products</h2>
+        <p class="nc-section-sub">Browse our complete collection</p>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="nc-filter-bar">
+        <div class="nc-search-wrap">
+          <i class="bi bi-search"></i>
+          <input type="text" class="nc-search-input" id="searchInput" placeholder="Search products...">
+        </div>
+        <div id="categoryFilters" class="d-flex flex-wrap gap-2">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="productsLoading" class="nc-loading">
+        <div class="spinner-border" role="status"></div>
+        <span>Loading products...</span>
+      </div>
+
+      <!-- Product Grid -->
+      <div class="row g-4" id="productGrid">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="productsEmpty" class="nc-empty-state" style="display:none">
+        <i class="bi bi-search"></i>
+        <h4>No products found</h4>
+        <p>Try adjusting your search or filter to find what you're looking for.</p>
+        <button class="nc-btn-outline" onclick="resetFilters()">Clear filters</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="nc-footer">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="nc-footer-brand">Nova<span>Cart</span></div>
+          <p>Good products. Simple shopping.<br>Thoughtfully selected items for modern life.</p>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6 class="nc-footer-heading">Shop</h6>
+          <ul class="nc-footer-links">
+            <li><a href="index.html">All Products</a></li>
+            <li><a href="index.html#catalog">Categories</a></li>
+            <li><a href="cart.html">Cart</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6 class="nc-footer-heading">Account</h6>
+          <ul class="nc-footer-links">
+            <li><a href="orders.html">Order History</a></li>
+            <li><a href="checkout.html">Checkout</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-4">
+          <h6 class="nc-footer-heading">About</h6>
+          <p style="font-size:0.85rem">NovaCart is a modern e-commerce platform delivering quality products with a seamless shopping experience.</p>
+        </div>
+      </div>
+      <div class="nc-footer-bottom">
+        &copy; 2026 NovaCart. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/products.js"></script>
+</body>
+</html>
