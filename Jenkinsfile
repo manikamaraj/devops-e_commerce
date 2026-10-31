@@ -96,11 +96,62 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                withCredentials([
+                    string(
+                        credentialsId: 'k8s-deployer-token',
+                        variable: 'K8S_TOKEN'
+                    )
+                ]) {
+                    sh '''
+                        set +x
+                        export KUBECONFIG="$(mktemp)"
+                        trap 'rm -f "$KUBECONFIG"' EXIT
+                        chmod 600 "$KUBECONFIG"
+
+                        kubectl config set-cluster novacart \
+                          --server="$K8S_SERVER" \
+                          --certificate-authority="$K8S_CA_CERT" \
+                          --embed-certs=true
+
+                        kubectl config set-credentials jenkins-deployer \
+                          --token="$K8S_TOKEN"
+
+                        kubectl config set-context novacart \
+                          --cluster=novacart \
+                          --user=jenkins-deployer \
+                          --namespace=default
+
+                        kubectl config use-context novacart
+
+                        echo "Deploying NovaCart image: ${IMAGE_NAME}:${BUILD_NUMBER}"
+
+                        kubectl set image deployment/novacart-app \
+                          app=${IMAGE_NAME}:${BUILD_NUMBER} \
+                          --namespace=default
+
+                        echo "Waiting for Kubernetes rollout..."
+
+                        kubectl rollout status deployment/novacart-app \
+                          --namespace=default \
+                          --timeout=180s
+
+                        echo "Deployment status:"
+                        kubectl get deployment novacart-app \
+                          --namespace=default
+
+                        echo "NovaCart deployment completed."
+                    '''
+                }
+            }
+        }
     }
 
     post {
         success {
-            echo 'NovaCart CI pipeline completed successfully.'
+            echo 'NovaCart CI/CD pipeline completed successfully.'
         }
 
         failure {
