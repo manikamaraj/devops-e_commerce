@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: novacart-mongo
+  labels:
+    app: novacart-mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: novacart-mongo
+  template:
+    metadata:
+      labels:
+        app: novacart-mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:7.0
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+          readinessProbe:
+            exec:
+              command:
+                - mongosh
+                - --quiet
+                - --eval
+                - "db.adminCommand('ping').ok"
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: mongo-data
+          persistentVolumeClaim:
+            claimName: novacart-mongo-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: novacart-app
+  labels:
+    app: novacart-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: novacart-app
+  template:
+    metadata:
+      labels:
+        app: novacart-app
+    spec:
+      containers:
+        - name: app
+          image: bunny9596/novacart:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MONGO_URI
+              value: mongodb://novacart-mongo:27017/simple_store
+            - name: PORT
+              value: "5000"
+            - name: NODE_ENV
+              value: production
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 5000
+            initialDelaySeconds: 30
+            periodSeconds: 20

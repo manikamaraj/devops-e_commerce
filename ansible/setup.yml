@@ -1,0 +1,29 @@
+---
+- name: Configure NovaCart server
+  hosts: novacart
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Display operating system information
+      ansible.builtin.debug:
+        msg: "NovaCart server OS: {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }}"
+
+    - name: Create NovaCart configuration directory
+      ansible.builtin.file:
+        path: /opt/novacart
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: "0755"
+
+    - name: Create NovaCart configuration file
+      ansible.builtin.copy:
+        dest: /opt/novacart/server-info.txt
+        content: |
+          Application: NovaCart
+          Managed by: Ansible
+          Environment: Development
+        owner: ubuntu
+        group: ubuntu
+        mode: "0644"
